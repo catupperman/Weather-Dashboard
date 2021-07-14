@@ -2,105 +2,70 @@
 //TODO: search for a city, presented with current and future conditions for that city and that city is added to the search history
 //Weather API
 //var testURL= "https://api.openweathermap.org/data/2.5/forecast?q=M%C3%BCnchen,DE&appid=b189ed07703c87b6aee0ad39e180260d"
-function weather(city) {
-    var openWeathURL = "https://api.openweathermap.org/data/2.5/forecast?q="
-    var myAPIKey = "&appid=b189ed07703c87b6aee0ad39e180260d"
-    var selectCity = document.querySelector("#selectcity-input").value
-    var searchBtn = document.querySelector(".btn")
+var selectCityEl = document.querySelector("#selectcity-input")
+var searchBtn = document.querySelector(".btn");
 
+searchBtn.addEventListener("click", function (event) {
+    event.preventDefault();
+    var city = selectCityEl.value
+    //console.log(city)
+    weather(city);
+})
+
+function weather(selectCity) {
+    var openWeathURL = "https://api.openweathermap.org/data/2.5/weather?q="
+    var myAPIKey = "&units=imperial&appid=b189ed07703c87b6aee0ad39e180260d"
+    console.log(selectCity);
     //Parse all three together in fullURL after finishing testing
     var fullURL = openWeathURL + selectCity + myAPIKey;
 
     fetch(fullURL)
         .then(function (response) {
-            response.json();
-
-            var resultBody = document.createElement('div');
-            resultBody.classList.add('card-body');
-            resultCard.append(resultBody);
-        })
-
-        console.log(fullURL)
-}
-
-
-function printWeather(resultObj) {
-    //console.log(resultObj);
-
-    var weatherDisplay = document.createElement('div');
-    weatherDisplay.classList.add('card', 'sm-light', 'text-light', 'mb-3', 'p-3');
-
-
-    var titleEl = document.createElement('h3');
-    titleEl.textContent = resultObj.title;
-
-    var bodyContentEl = document.createElement('p');
-    bodyContentEl.innerHTML =
-        '<strong>Date:</strong> ' + resultObj.date + '<br/>';
-
-    if (resultObj.subject) {
-        bodyContentEl.innerHTML +=
-            '<strong>Subjects:</strong> ' + resultObj.subject.join(', ') + '<br/>';
-    } else {
-        bodyContentEl.innerHTML +=
-            '<strong>Subjects:</strong> No subject for this entry.';
-    }
-
-    if (resultObj.description) {
-        bodyContentEl.innerHTML +=
-            '<strong>Description:</strong> ' + resultObj.description[0];
-    } else {
-        bodyContentEl.innerHTML +=
-            '<strong>Description:</strong>  No description for this entry.';
-    }
-
-    var linkButtonEl = document.createElement('a');
-    linkButtonEl.textContent = 'Read More';
-    linkButtonEl.setAttribute('href', resultObj.url);
-    linkButtonEl.classList.add('btn', 'btn-dark');
-
-    resultBody.append(titleEl, bodyContentEl, linkButtonEl);
-
-    resultContentEl.append(weatherDisplay);
-}
-
-function searchApi(query, format) {
-    var locQueryUrl = 'https://www.loc.gov/search/?fo=json';
-
-    if (format) {
-        locQueryUrl = 'https://www.loc.gov/' + format + '/?fo=json';
-    }
-
-    locQueryUrl = locQueryUrl + '&q=' + query;
-
-    fetch(locQueryUrl)
-        .then(function (response) {
-            if (!response.ok) {
-                throw response.json();
+            console.log(response);
+            if (response.status === 200) {
+                console.log(response.status);
             }
-
             return response.json();
         })
-        .then(function (locRes) {
-            // write query to page so user knows what they are viewing
-            resultTextEl.textContent = locRes.search.query;
+        .then(function (data) {
+            console.log(data);
+            var card = $("<div>").addClass("card m-1").attr("style", "border: 1px solid black");
+            var cardBody = $("<div>").addClass("card-body");
+            var cardTitle = $("<h3>").addClass("card-title").text(data.name)
+            var temp = $("<h5>").addClass("card-text").text("Temperature:" + Math.round(data.main.temp) + String.fromCharCode(176))
+            $("#weather-main").append(card.append(cardBody.append(cardTitle, temp)))
 
-            console.log(locRes);
-
-            if (!locRes.results.length) {
-                console.log('No results found!');
-                resultContentEl.innerHTML = '<h3>No results found, search again!</h3>';
-            } else {
-                resultContentEl.textContent = '';
-                for (var i = 0; i < locRes.results.length; i++) {
-                    printResults(locRes.results[i]);
-                }
-            }
-        })
-        .catch(function (error) {
-            console.error(error);
+            //call oneCall here
+            var lat = data.coord.lat;
+            var lon = data.coord.lon;
+            fiveDay(lat, lon)
         });
+
+    console.log(fullURL)
 }
+
+function fiveDay(lat, lon) {
+    var oneCallUrl = `https://api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${lon}&exclude=minutely`
+    var myAPIKey = "&units=imperial&appid=b189ed07703c87b6aee0ad39e180260d"
+
+    //Parse all three together in fullURL after finishing testing
+    var fullURL = oneCallUrl + myAPIKey;
+
+    fetch(fullURL)
+        .then(function (response) {
+            console.log(response);
+            if (response.status === 200) {
+                console.log(response.status);
+            }
+            return response.json();
+        })
+        .then(function (data) {
+            console.log(data);
+
+        })
+}
+
+
 //fetch API using combined fullURL- event listener
 //function with user parameter on click of search to show the weather for that city
 
