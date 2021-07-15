@@ -5,9 +5,16 @@ var searchBtn = document.querySelector(".btn");
 searchBtn.addEventListener("click", function (event) {
     event.preventDefault();
     var city = selectCityEl.value
-    //console.log(city)
+    //TODO: Add Title on Click with Five-Day
+    //var fiveDayTitle = $("#forecast-title").text("Five Day Forecast").addClass("text-blue");
+
+
+    localStorage.setItem(selectCityEl, city);
     weather(city);
 })
+//Append to the page as a button that re-enters into the text box
+$("#local-city").append(localStorage.getItem(selectCityEl));
+
 
 //function with user parameter on click of search to show the weather for that city
 function weather(selectCity) {
@@ -66,10 +73,12 @@ function fiveDay(lat, lon) {
             for(let i=0; i<5; i++) {
             var cardFiveDay = $("<div>").addClass("card m-1").attr("style", "border: 2px solid black");
             var cardFiveBody = $("<div>").addClass("card-body");
+            //TODO: figure out how this icon thingie works
+            var icon = $("<div>").text(data.daily[i].weather[0].icon.png)
             var tempFiveDay = $("<p>").addClass("card-text").text("Temperature: " + Math.round(data.daily[i].temp.max)+ String.fromCharCode(176));
             var humFiveDay = $("<p>").addClass("card-text").text("Humidity: " + data.daily[i].humidity + "%");
             var windFiveDay = $("<p>").addClass("card-text").text("Wind: " + Math.round(data.daily[i].wind_speed) + "MPH");
-            $("#five-day").append(cardFiveDay.append(cardFiveBody.append(tempFiveDay, humFiveDay, windFiveDay )));
+            $("#five-day").append(cardFiveDay.append(cardFiveBody.append(icon, tempFiveDay, humFiveDay, windFiveDay )));
             
             console.log(data);
         }
