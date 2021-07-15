@@ -1,7 +1,4 @@
 //TODO: a weather dashboard with form inputs
-//TODO: search for a city, presented with current and future conditions for that city and that city is added to the search history
-//Weather API
-//var testURL= "https://api.openweathermap.org/data/2.5/forecast?q=M%C3%BCnchen,DE&appid=b189ed07703c87b6aee0ad39e180260d"
 var selectCityEl = document.querySelector("#selectcity-input")
 var searchBtn = document.querySelector(".btn");
 
@@ -12,13 +9,16 @@ searchBtn.addEventListener("click", function (event) {
     weather(city);
 })
 
+//function with user parameter on click of search to show the weather for that city
 function weather(selectCity) {
+    //Weather API
     var openWeathURL = "https://api.openweathermap.org/data/2.5/weather?q="
     var myAPIKey = "&units=imperial&appid=b189ed07703c87b6aee0ad39e180260d"
     console.log(selectCity);
-    //Parse all three together in fullURL after finishing testing
+    //Parse all three together in fullURL 
     var fullURL = openWeathURL + selectCity + myAPIKey;
 
+    //fetch API using combined fullURL- event listener
     fetch(fullURL)
         .then(function (response) {
             console.log(response);
@@ -33,7 +33,9 @@ function weather(selectCity) {
             var cardBody = $("<div>").addClass("card-body");
             var cardTitle = $("<h3>").addClass("card-title").text(data.name)
             var temp = $("<h5>").addClass("card-text").text("Temperature:" + Math.round(data.main.temp) + String.fromCharCode(176))
-            $("#weather-main").append(card.append(cardBody.append(cardTitle, temp)))
+            var humidity = $("<h5>").addClass("card-text").text("Humidity:" + data.main.humidity+ "%")
+            var wind = $("<h5>").addClass("card-text").text("Wind " + Math.round(data.wind.speed) + "MPH")
+            $("#weather-main").append(card.append(cardBody.append(cardTitle, temp, humidity, wind)))
 
             //call oneCall here
             var lat = data.coord.lat;
@@ -43,12 +45,13 @@ function weather(selectCity) {
 
     console.log(fullURL)
 }
-
+//TODO: search for a city, presented with current and future conditions for that city and that city is added to the search history
+//function to pull the five day forecast 
 function fiveDay(lat, lon) {
     var oneCallUrl = `https://api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${lon}&exclude=minutely`
     var myAPIKey = "&units=imperial&appid=b189ed07703c87b6aee0ad39e180260d"
 
-    //Parse all three together in fullURL after finishing testing
+    //Parse all three together in fullURL 
     var fullURL = oneCallUrl + myAPIKey;
 
     fetch(fullURL)
@@ -60,14 +63,21 @@ function fiveDay(lat, lon) {
             return response.json();
         })
         .then(function (data) {
+            for(let i=0; i<5; i++) {
+            var cardFiveDay = $("<div>").addClass("card m-1").attr("style", "border: 2px solid black");
+            var cardFiveBody = $("<div>").addClass("card-body");
+            var tempFiveDay = $("<p>").addClass("card-text").text("Temperature: " + Math.round(data.daily[i].temp.max)+ String.fromCharCode(176));
+            var humFiveDay = $("<p>").addClass("card-text").text("Humidity: " + data.daily[i].humidity + "%");
+            var windFiveDay = $("<p>").addClass("card-text").text("Wind: " + Math.round(data.daily[i].wind_speed) + "MPH");
+            $("#five-day").append(cardFiveDay.append(cardFiveBody.append(tempFiveDay, humFiveDay, windFiveDay )));
+            
             console.log(data);
+        }
 
         })
 }
 
 
-//fetch API using combined fullURL- event listener
-//function with user parameter on click of search to show the weather for that city
 
 
 //save said user selection within local storage, appending to the page, so that it will remain in a separate button under the search bar and remains after refreshing the page.
