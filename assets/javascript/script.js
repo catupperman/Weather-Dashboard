@@ -7,10 +7,9 @@ searchBtn.addEventListener("click", function (event) {
     var city = selectCityEl.value
     //TODO: Add Title on Click with Five-Day
     //var fiveDayTitle = $("#forecast-title").text("Five Day Forecast").addClass("text-blue");
-
-
     localStorage.setItem(selectCityEl, city);
     weather(city);
+    
 })
 //Append to the page as a button that re-enters into the text box
 $("#local-city").append(localStorage.getItem(selectCityEl));
@@ -42,6 +41,7 @@ function weather(selectCity) {
             var temp = $("<h5>").addClass("card-text").text("Temperature:" + Math.round(data.main.temp) + String.fromCharCode(176))
             var humidity = $("<h5>").addClass("card-text").text("Humidity:" + data.main.humidity+ "%")
             var wind = $("<h5>").addClass("card-text").text("Wind " + Math.round(data.wind.speed) + "MPH")
+            var uvIndex = $("<h5>").addClass("card-text").text("UV Index: " + data.)
             $("#weather-main").append(card.append(cardBody.append(cardTitle, temp, humidity, wind)))
 
             //call oneCall here
@@ -74,7 +74,7 @@ function fiveDay(lat, lon) {
             var cardFiveDay = $("<div>").addClass("card m-1").attr("style", "border: 2px solid black");
             var cardFiveBody = $("<div>").addClass("card-body");
             //TODO: figure out how this icon thingie works
-            var icon = $("<div>").text(data.daily[i].weather[0].icon.png)
+            var icon = $("<img src =").addClass("card-text").text("http://openweathermap.org/img/w/" + data.daily.weather[i].icon + ".png");
             var tempFiveDay = $("<p>").addClass("card-text").text("Temperature: " + Math.round(data.daily[i].temp.max)+ String.fromCharCode(176));
             var humFiveDay = $("<p>").addClass("card-text").text("Humidity: " + data.daily[i].humidity + "%");
             var windFiveDay = $("<p>").addClass("card-text").text("Wind: " + Math.round(data.daily[i].wind_speed) + "MPH");
