@@ -1,17 +1,19 @@
 //TODO: a weather dashboard with form inputs
 var selectCityEl = document.querySelector("#selectcity-input")
 var searchBtn = document.querySelector(".btn");
+var date = new Date();
 
 searchBtn.addEventListener("click", function (event) {
     event.preventDefault();
     var city = selectCityEl.value
     //TODO: Add Title on Click with Five-Day
-    //var fiveDayTitle = $("#forecast-title").text("Five Day Forecast").addClass("text-blue");
+    
     localStorage.setItem(selectCityEl, city);
     weather(city);
     
 })
 //Append to the page as a button that re-enters into the text box
+//JSON Parse??
 $("#local-city").append(localStorage.getItem(selectCityEl));
 
 
@@ -38,11 +40,13 @@ function weather(selectCity) {
             var card = $("<div>").addClass("card m-1").attr("style", "border: 1px solid black");
             var cardBody = $("<div>").addClass("card-body");
             var cardTitle = $("<h3>").addClass("card-title").text(data.name)
+            var iconDaily = $("<img>").attr("src", "http://openweathermap.org/img/w/" + data.weather[0].icon + ".png")
             var temp = $("<h5>").addClass("card-text").text("Temperature:" + Math.round(data.main.temp) + String.fromCharCode(176))
             var humidity = $("<h5>").addClass("card-text").text("Humidity:" + data.main.humidity+ "%")
             var wind = $("<h5>").addClass("card-text").text("Wind " + Math.round(data.wind.speed) + "MPH")
-            var uvIndex = $("<h5>").addClass("card-text").text("UV Index: " + data.)
-            $("#weather-main").append(card.append(cardBody.append(cardTitle, temp, humidity, wind)))
+            var localDate = $("<h5>").addClass("card-text").text(date.toLocaleDateString('en-US'));
+            //var uvIndex = $("<h5>").addClass("card-text").text("UV Index: " + data.)
+            $("#weather-main").append(card.append(cardBody.append(iconDaily, localDate, cardTitle, temp, humidity, wind)))
 
             //call oneCall here
             var lat = data.coord.lat;
@@ -71,14 +75,15 @@ function fiveDay(lat, lon) {
         })
         .then(function (data) {
             for(let i=0; i<5; i++) {
-            var cardFiveDay = $("<div>").addClass("card m-1").attr("style", "border: 2px solid black");
+            var cardFiveDay = $("<div>").addClass("card m-2").attr("style", "border: 2px solid black");
             var cardFiveBody = $("<div>").addClass("card-body");
-            //TODO: figure out how this icon thingie works
-            var icon = $("<img src =").addClass("card-text").text("http://openweathermap.org/img/w/" + data.daily.weather[i].icon + ".png");
+            var dateFiveDay = $("<div>").addClass("card-text").text(date.toLocaleDateString('en-US'));
+            var icon = $("<img>").attr("src", "http://openweathermap.org/img/w/" + data.daily[i].weather[0].icon + ".png")
             var tempFiveDay = $("<p>").addClass("card-text").text("Temperature: " + Math.round(data.daily[i].temp.max)+ String.fromCharCode(176));
             var humFiveDay = $("<p>").addClass("card-text").text("Humidity: " + data.daily[i].humidity + "%");
             var windFiveDay = $("<p>").addClass("card-text").text("Wind: " + Math.round(data.daily[i].wind_speed) + "MPH");
-            $("#five-day").append(cardFiveDay.append(cardFiveBody.append(icon, tempFiveDay, humFiveDay, windFiveDay )));
+            var uvIndex = $("<p>").addClass("card-text").text("UV Index:  " + data.daily.uvi)
+            $("#five-day").append(cardFiveDay.append(cardFiveBody.append(dateFiveDay, icon, tempFiveDay, humFiveDay, windFiveDay, uvIndex)));
             
             console.log(data);
         }
@@ -86,10 +91,10 @@ function fiveDay(lat, lon) {
         })
 }
 
-
-
-
 //save said user selection within local storage, appending to the page, so that it will remain in a separate button under the search bar and remains after refreshing the page.
+
+
+
 
 
 
