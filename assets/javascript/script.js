@@ -82,8 +82,16 @@ function fiveDay(lat, lon) {
             var tempFiveDay = $("<p>").addClass("card-text").text("Temperature: " + Math.round(data.daily[i].temp.max)+ String.fromCharCode(176));
             var humFiveDay = $("<p>").addClass("card-text").text("Humidity: " + data.daily[i].humidity + "%");
             var windFiveDay = $("<p>").addClass("card-text").text("Wind: " + Math.round(data.daily[i].wind_speed) + "MPH");
-            var uvIndex = $("<p>").addClass("card-text").text("UV Index:  " + data.daily.uvi)
+            var uvIndex = $("<p>").addClass("card-text").text("UV Index:  " + data.daily[i].uvi)
             $("#five-day").append(cardFiveDay.append(cardFiveBody.append(dateFiveDay, icon, tempFiveDay, humFiveDay, windFiveDay, uvIndex)));
+            
+            if(uvIndex <= 3){
+                $(this).addClass("good")
+            } else if (uvIndex >= 6){
+                $(this).addClass("bad")
+            } else {
+                $(this).addClass("not-so-bad")
+            }
             
             console.log(data);
         }
